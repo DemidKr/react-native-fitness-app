@@ -3,7 +3,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { useColorScheme } from '@/components/useColorScheme';
 
@@ -48,10 +48,27 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={DefaultTheme}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen
+            name='index'
+            options={{
+              // https://reactnavigation.org/docs/headers#setting-the-header-title
+              title: 'My home',
+              // headerBackButtonMenuEnabled: false,
+              // headerBackTitleVisible: false
+              // https://reactnavigation.org/docs/headers#adjusting-header-styles
+              // headerStyle: { backgroundColor: '#f4511e' },
+              // headerTintColor: '#fff',
+              // headerTitleStyle: {
+              //   fontWeight: 'bold',
+              // },
+              // https://reactnavigation.org/docs/headers#replacing-the-title-with-a-custom-component
+              // headerTitle: props => <LogoTitle {...props} />,
+            }}
+        />
+        <Stack.Screen name="bmi" options={{ headerShown: true, title: "Калькулятор индекс массы тела", headerBackVisible: true, headerBackButtonMenuEnabled: true }} />
+        {/*<Stack.Screen name="(dairy)" options={{ headerShown: false , title: "Калькулятор индекс массы тела"}} />*/}
       </Stack>
     </ThemeProvider>
   );
