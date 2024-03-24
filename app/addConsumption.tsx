@@ -4,7 +4,7 @@ import {View, Text, TextInput, ScrollView} from "react-native";
 import CustomButton from "@/components/CustomButton";
 import DateTimePicker, {DateTimePickerEvent} from "@react-native-community/datetimepicker";
 import {useFetch} from "@/hooks/useFetch";
-import {ICategoryList, ICreateCategoryRequest} from "@/types/category";
+import {ICategoryList} from "@/types/category";
 import {getFormattedDate} from "@/uitils/getFormattedDate";
 import {Clock} from "react-native-feather";
 import {List, ProgressBar} from 'react-native-paper';
