@@ -1,8 +1,8 @@
 import {View, Text} from "react-native";
 import {colors, styles} from "@/styles/commonStyles";
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import {Button, DataTable, ProgressBar} from "react-native-paper";
+import {DataTable, ProgressBar} from "react-native-paper";
 import CustomButton from "@/components/CustomButton";
 import { Link } from "expo-router";
 import {useFetch} from "@/hooks/useFetch";
@@ -11,6 +11,7 @@ import {getFormattedDate} from "@/uitils/getFormattedDate";
 import {ICategoryList} from "@/types/category";
 import {useDelete} from "@/hooks/useDelete";
 import {useSnackbar} from "@/hooks/useSnackbar";
+import {DEFAULT_TOTAL_CONSUMPTION} from "@/constants";
 
 export default function Dairy() {
     const [date, setDate] = useState(new Date(Date.now()));
@@ -66,6 +67,18 @@ export default function Dairy() {
         })
         return foundCategory?.name ?? ''
     }
+
+    const totalDayConsumption = useMemo(() => {
+        return consumptionList?.reduce((result, consumption) => {
+            return {
+                ...result,
+                calories: result.calories + consumption.calories,
+                fat: result.fat + (consumption?.fat ?? 0),
+                carbs: result.carbs + (consumption.carbs ?? 0),
+                protein: result.protein + (consumption.protein ?? 0),
+            }
+        }, DEFAULT_TOTAL_CONSUMPTION) ?? DEFAULT_TOTAL_CONSUMPTION
+    }, [consumptionList])
 
     const isEmptyData = !consumptionList?.length && !isConsumptionLoading
 
@@ -141,6 +154,18 @@ export default function Dairy() {
                         </DataTable.Row>
                     ))}
 
+                    {!isEmptyData && !isLoading && (
+                        <DataTable.Row key={totalDayConsumption.id} style={styles.resultRow}>
+                            <DataTable.Cell style={styles.wideCell}>{totalDayConsumption.name}</DataTable.Cell>
+                            <DataTable.Cell>{totalDayConsumption.calories}</DataTable.Cell>
+                            <DataTable.Cell>{totalDayConsumption.protein ?? 0}</DataTable.Cell>
+                            <DataTable.Cell>{totalDayConsumption.fat ?? 0}</DataTable.Cell>
+                            <DataTable.Cell>{totalDayConsumption.carbs ?? 0}</DataTable.Cell>
+                            <DataTable.Cell style={styles.wideCell}>{''}</DataTable.Cell>
+                            <DataTable.Cell style={styles.deleteCell}>{''}</DataTable.Cell>
+                        </DataTable.Row>
+                    )}
+
                     {isLoading && <ProgressBar indeterminate color={colors.primary} />}
 
                     {isEmptyData && (
@@ -149,8 +174,7 @@ export default function Dairy() {
                                 Записей нет
                             </Text>
                         </View>
-                    )
-                    }
+                    )}
                 </DataTable>
 
                 {show && (

@@ -12,7 +12,12 @@ const AddCategory = () => {
     const [category, setCategory] = useState<string>('');
     const [description, setDescription] = useState<string>('');
 
-    const { makeRequest, data, isLoading, error} = usePost<ICreateCategoryRequest, unknown>('categories')
+    const {
+        makeRequest,
+        data,
+        isLoading,
+        error
+    } = usePost<ICreateCategoryRequest, unknown>('categories')
 
     const snackbar = useSnackbar(error)
 

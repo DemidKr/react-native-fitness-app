@@ -10,7 +10,16 @@ interface IConsumptionResponse {
     fat: number | null,
     carbs: number | null,
     protein: number | null,
-    // TODO: change to category
+    categoryId: number,
+}
+
+interface ICreateConsumptionRequest {
+    name: string,
+    date: Date,
+    calories: number,
+    fat?: number,
+    carbs?: number,
+    protein?: number,
     categoryId: number,
 }
 

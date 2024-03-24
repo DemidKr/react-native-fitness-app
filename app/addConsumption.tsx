@@ -1,13 +1,16 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {colors, styles} from "@/styles/commonStyles";
 import {View, Text, TextInput, ScrollView} from "react-native";
 import CustomButton from "@/components/CustomButton";
 import DateTimePicker, {DateTimePickerEvent} from "@react-native-community/datetimepicker";
 import {useFetch} from "@/hooks/useFetch";
-import {ICategoryList} from "@/types/category";
+import {ICategoryList, ICreateCategoryRequest} from "@/types/category";
 import {getFormattedDate} from "@/uitils/getFormattedDate";
 import {Clock} from "react-native-feather";
-import { List } from 'react-native-paper';
+import {List, ProgressBar} from 'react-native-paper';
+import {usePost} from "@/hooks/usePost";
+import {router} from "expo-router";
+import {useSnackbar} from "@/hooks/useSnackbar";
 
 const AddConsumption = () => {
     const [name, setName] = useState<string>('')
@@ -15,7 +18,7 @@ const AddConsumption = () => {
     const [carbs, setCarbs] = useState<number>(0)
     const [protein, setProtein] = useState<number>(0)
     const [fat, setFat] = useState<number>(0)
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
+    const [categoryId, setCategoryId] = useState<number>(0)
     const [date, setDate] = useState<Date>(new Date(Date.now()));
     const [show, setShow] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -29,6 +32,16 @@ const AddConsumption = () => {
         ICategoryList
     >('categories', null)
 
+    const {
+        makeRequest,
+        data,
+        isLoading,
+        error
+    } = usePost<ICreateConsumptionRequest, unknown>('consumptions')
+
+    const snackbar = useSnackbar(error)
+
+
     const onChange = (event: DateTimePickerEvent,  date?: Date) => {
         setShow(false);
         if(date) {
@@ -37,6 +50,8 @@ const AddConsumption = () => {
     };
 
     const handleExpand = () => setIsExpanded(!isExpanded);
+
+    const handleNameChange = (text: string) => setName(text)
 
     const handleCaloriesChange = (text: string) => {
         setCalories(parseInt(text.replace(/[^0-9]/g, '')));
@@ -63,16 +78,36 @@ const AddConsumption = () => {
         setCalories(carbs * 4 + protein * 4 + fatInput * 9)
     };
 
+    const handleCategoryChange = (id: number) => setCategoryId(id)
+
+    const getIsChecked = (id: number): boolean => id === categoryId
+
+
     const handleShow = () => {
         setShow(true)
     }
 
     const handleAddConsumption = () => {
-
+        makeRequest({
+            name,
+            calories,
+            date,
+            carbs,
+            fat,
+            protein,
+            categoryId
+        })
     }
 
     const isEmptyData = !categoriesList && !isCategoriesLoading
 
+    const isSubmitButtonDisabled = !name || !calories || !date || !categoryId
+
+    useEffect(() => {
+        if(data) {
+            router.replace('/dairy');
+        }
+    }, [data])
 
     return (
         <ScrollView>
@@ -89,13 +124,22 @@ const AddConsumption = () => {
                             </Text>
                         </View>
                     </CustomButton>
+
+                    <Text style={styles.label}>Название</Text>
+                    <TextInput
+                        defaultValue=''
+                        style={styles.searchInput}
+                        onChangeText={handleNameChange}
+                        placeholder="Введите название"
+                    />
+
                     <Text style={styles.title}>
                         Введите калории вручную, или заполните БЖУ и калории рассчитаются автоматически
                     </Text>
 
                     <Text style={styles.label}>Калории</Text>
                     <TextInput
-                        defaultValue=''
+                        value={calories.toString()}
                         style={styles.searchInput}
                         onChangeText={handleCaloriesChange}
                         keyboardType='numeric'
@@ -104,7 +148,7 @@ const AddConsumption = () => {
 
                     <Text style={styles.label}>Углеводы</Text>
                     <TextInput
-                        defaultValue=''
+                        value={carbs.toString()}
                         style={styles.searchInput}
                         onChangeText={handleCarbsChange}
                         keyboardType='numeric'
@@ -113,7 +157,7 @@ const AddConsumption = () => {
 
                     <Text style={styles.label}>Белки</Text>
                     <TextInput
-                        defaultValue=''
+                        value={protein.toString()}
                         style={styles.searchInput}
                         onChangeText={handleProteinChange}
                         keyboardType='numeric'
@@ -122,7 +166,7 @@ const AddConsumption = () => {
 
                     <Text style={styles.label}>Жиры</Text>
                     <TextInput
-                        defaultValue=''
+                        value={fat.toString()}
                         style={styles.searchInput}
                         onChangeText={handleFatChange}
                         keyboardType='numeric'
@@ -141,15 +185,22 @@ const AddConsumption = () => {
                                 return <List.Item
                                     key={item.id}
                                     title={item.name}
-                                    right={props => <List.Icon {...props} icon="check" />}
+                                    onPress={() => handleCategoryChange(item.id)}
+                                    right={props =>
+                                        getIsChecked(item.id) && <List.Icon {...props} icon="check" />
+                                    }
                                 />
                             })}
                         </List.Accordion>
                     </List.Section>
 
-                    <CustomButton onPress={handleShow}>
+                    <CustomButton onPress={handleAddConsumption} disabled={isSubmitButtonDisabled}>
                         Подтвердить
                     </CustomButton>
+
+                    {isLoading && (
+                        <ProgressBar indeterminate color={colors.primary} />
+                    )}
 
                     {show && (
                         <DateTimePicker
@@ -161,6 +212,8 @@ const AddConsumption = () => {
                         />
                     )}
                 </View>
+
+                {snackbar}
             </View>
         </ScrollView>
     );

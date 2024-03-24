@@ -6,6 +6,7 @@ export const colors = {
     textPrimary: 'rgb(255, 255, 255)',
     textSecondary: 'rgb(0,0,0)',
     background: 'rgb(240,240,240)',
+    border: 'rgb(0,0,0)',
 }
 
 export const styles = StyleSheet.create({
@@ -20,9 +21,19 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         gap: 10
     },
+    mainMenu: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: 'center',
+        gap: 10
+    },
     searchInput: {
         width: "100%",
         height: 30,
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: colors.border,
+        padding: 2
     },
     title: {
         fontSize: 16,
@@ -68,6 +79,10 @@ export const styles = StyleSheet.create({
     },
     deleteCell: {
         flex: 0.5
+    },
+    resultRow: {
+        borderTopColor: colors.border,
+        borderTopWidth: 1
     },
     select: {
         backgroundColor: colors.background,
