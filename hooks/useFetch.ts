@@ -1,23 +1,24 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-
-
-const useFetch = <Query, Response extends { [prop: string]: any }, Error> (
+export const useFetch = <Query, Response extends { [prop: string]: any }, Error = { [prop: string]: any }> (
     endpoint: string,
     query: Query,
-    isRapidApi: boolean = true,
+    isRapidApi: boolean = false,
     isFetchByDefault: boolean = true
 ) => {
-    const [data, setData] = useState<Response | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [data, setData]
+        = useState<Response | null>(null);
+    const [isLoading, setIsLoading]
+        = useState(false);
+    const [error, setError]
+        = useState<Error | null>(null);
 
     const request: { method: string; url: string; params: Query; headers?: { [key: string]: string; }} = {
         method: "GET",
         url: isRapidApi
             ? `https://jsearch.p.rapidapi.com/${endpoint}`
-            : `http://192.168.3.77:5000/${endpoint}`,
+            : process.env.API_BASE_URL + endpoint,
         params: { ...query },
     };
 
@@ -37,8 +38,6 @@ const useFetch = <Query, Response extends { [prop: string]: any }, Error> (
 
         try {
             const response = await axios.request(request);
-            console.log('response', response)
-
             setData(response.data);
             setIsLoading(false);
         } catch (error) {
@@ -62,5 +61,3 @@ const useFetch = <Query, Response extends { [prop: string]: any }, Error> (
 
     return { data, isLoading, error, refetch };
 };
-
-export default useFetch;

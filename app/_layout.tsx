@@ -1,11 +1,9 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect } from 'react';
-
-import { useColorScheme } from '@/components/useColorScheme';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -45,30 +43,15 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack>
-        <Stack.Screen
-            name='index'
-            options={{
-              // https://reactnavigation.org/docs/headers#setting-the-header-title
-              title: 'My home',
-              // headerBackButtonMenuEnabled: false,
-              // headerBackTitleVisible: false
-              // https://reactnavigation.org/docs/headers#adjusting-header-styles
-              // headerStyle: { backgroundColor: '#f4511e' },
-              // headerTintColor: '#fff',
-              // headerTitleStyle: {
-              //   fontWeight: 'bold',
-              // },
-              // https://reactnavigation.org/docs/headers#replacing-the-title-with-a-custom-component
-              // headerTitle: props => <LogoTitle {...props} />,
-            }}
-        />
-        <Stack.Screen name="bmi" options={{ headerShown: true, title: "Калькулятор индекс массы тела", headerBackVisible: true, headerBackButtonMenuEnabled: true }} />
-        {/*<Stack.Screen name="(dairy)" options={{ headerShown: false , title: "Калькулятор индекс массы тела"}} />*/}
+        <Stack.Screen name='index' options={{headerShown: true, title: "Домашняя страница"}}/>
+        <Stack.Screen name="bmi" options={{headerShown: true, title: "Калькулятор индекс массы тела"}} />
+        <Stack.Screen name="dairy" options={{headerShown: true, title: "Дневник калорий"}} />
+        <Stack.Screen name="categories" options={{headerShown: true, title: "Список категорий"}} />
+        <Stack.Screen name="addCategory" options={{headerShown: true, title: "Новая категория"}} />
+        <Stack.Screen name="addConsumption" options={{headerShown: true, title: "Новая запись"}} />
       </Stack>
     </ThemeProvider>
   );

@@ -1,10 +1,8 @@
 import React, {useState} from "react";
 import {Text, TextInput, View} from "react-native";
 import {styles} from "@/styles/commonStyles";
-import {Button, RadioButton, Switch} from "react-native-paper";
-import {Link} from "expo-router";
-import useFetch from "@/hooks/useFetch";
 import CustomButton from "@/components/CustomButton";
+import {useFetch} from "@/hooks/useFetch";
 
 export default function BMI() {
     const [gender, setGender] = useState<string>('male');
@@ -101,13 +99,13 @@ export default function BMI() {
                 {/*    onValueChange={handleIsPhysicalChange}*/}
                 {/*/>*/}
 
-                <CustomButton onPress={refetch}>
+                <CustomButton onPress={() => refetch()}>
                     Рассчитать
                 </CustomButton>
 
                 {response?.data && (
                     <>
-                        <Text style={styles.title}>Ваша индекс тела: {response?.data.bmi}</Text>
+                        <Text style={styles.title}>Ваш индекс тела: {response?.data.bmi}</Text>
                         <Text style={styles.title}>Состояние здоровья: {response?.data.health}</Text>
                     </>
                 )}
